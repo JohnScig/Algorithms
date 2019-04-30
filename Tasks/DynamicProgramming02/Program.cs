@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DynamicProgramming
+namespace DynamicProgramming02
 {
     class Subject
     {
@@ -13,6 +13,17 @@ namespace DynamicProgramming
         public int Time { get; set; }
     }
 
+    class ChartElement
+    {
+        public int Value { get; set; }
+        public bool Selected { get; set; }
+
+        public ChartElement()
+        {
+            Value = 0;
+            Selected = false;
+        }
+    }
 
     class Program
     {
@@ -20,9 +31,11 @@ namespace DynamicProgramming
         {
             LoadMatrix();
             Console.ReadLine();
+            WhichSubjectsToStudy();
+            Console.ReadLine();
         }
 
-        private static int[,] matrix = new int[6, 5];
+        private static ChartElement[,] matrix = new ChartElement[6, 5];
         private static Subject[] _subjects = new Subject[]
         {
               new Subject {Name = "no", Value = 0, Time = 0},
@@ -40,7 +53,7 @@ namespace DynamicProgramming
                 {
                     if (i == 0 || j == 0)
                     {
-                        matrix[i, j] = 0;
+                        matrix[i, j].Value = 0;
                     }
                 }
             }
@@ -51,29 +64,33 @@ namespace DynamicProgramming
             {
                 for (int j = 1; j < (_subjects.Length); j++)
                 {
-                    int lastValue = 0;
+                    int addedValue = 0;
                     try
                     {
-                        lastValue = _subjects[j].Value + matrix[i - _subjects[j].Time, j - 1];
+                        addedValue = _subjects[j].Value + matrix[i - _subjects[j].Time, j - 1].Value;
                     }
                     catch (Exception)
                     {
 
-                        lastValue = 0;
+                        addedValue = 0;
                     }
 
-                    int previousMatrixValue = 0;
+                    int noAddedValue = 0;
                     try
                     {
-                        previousMatrixValue = matrix[i, j-1];
+                        noAddedValue = matrix[i, j - 1].Value;
                     }
                     catch (Exception)
                     {
 
-                        previousMatrixValue = 0;
+                        noAddedValue = 0;
                     }
 
-                    matrix[i, j] = Math.Max(previousMatrixValue, lastValue);
+                    matrix[i, j].Value = Math.Max(noAddedValue, addedValue);
+                    if (matrix[i, j].Value == addedValue)
+                    {
+                        matrix[i, j].Selected = true;
+                    }
                 }
 
                 DrawCache();
@@ -103,6 +120,12 @@ namespace DynamicProgramming
             }
             Console.WriteLine();
         }
+
+        private static void WhichSubjectsToStudy()
+        {
+
+        }
+
 
     }
 }
